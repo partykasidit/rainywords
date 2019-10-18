@@ -6,5 +6,6 @@ var button = document.getElementById('button');
 var textBox = document.getElementById('textbox');
 
 button.addEventListener("click",function(){
-    alert('Button clicked');
+    socket.emit('new_player',textBox.value);
+    window.location.href = "/game.html";
 });
