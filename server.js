@@ -1,3 +1,4 @@
+//Include dependencies
 var express = require('express');
 var path = require('path');
 var socket = require('socket.io');
@@ -21,22 +22,22 @@ app.get('/game', function(req, res){
 var io = socket(server);
 
 //Initialize game variables
-var clients = [];
-var players = [];
+var players = new Map();
 
-//welcome
-io.on('connection',function(socket){
-    console.log('Socket ' + socket.id + ' is connected');
-    clients.push(socket.id);
-    console.log('Current sockets : ' + clients);
-    socket.on('add_player',(data)=>{
-        io.sockets.emit('number_of_players_changed',2/*number of players*/);
+//Game server
+const nsp = io.of('/game');
+nsp.on('connection',(socket)=>{
+    socket.on('disconnect', function() {
+        players.delete(socket.id);
+        console.log(players);
     });
-    socket.on('disconnect',()=>{
-        console.log('Socket ' + socket.id + ' is disconnected!');
-        var i = clients.indexOf(socket);
-        clients.splice(i, 1);
-        console.log('Current sockets : ' + clients);
+    socket.on('add_player',(name)=>{
+        players.set(socket.id,{
+            'username' : name,
+            'score' : 0,
+        });
+        console.log(players); //Got problem with namespace
+        io.sockets.emit('number_of_players_changed',players.size);
     });
     socket.on('get_words',()=>{
         io.sockets.emit('words',['Rain','Chulalongkorn','Engineering']);
@@ -44,10 +45,4 @@ io.on('connection',function(socket){
     socket.on('increase_point',()=>{
         
     });
-});
-
-//game
-const nsp = io.of('/my-namespace');
-nsp.on('connection',(socket)=>{
-    console.log('someone connected');
 });
