@@ -1,0 +1,14 @@
+import React from "react";
+
+function Score({ players, userId }) {
+  return (
+    <div className="Score">
+      <h1>
+        {players !== null &&
+          `${players[userId].username}: ${players[userId].score}`}
+      </h1>
+      {/* <h1>{players[oppId].username}: {players[oppId].score}</h1> */}
+    </div>
+  );
+}
+export default Score;

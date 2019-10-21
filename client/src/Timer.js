@@ -1,15 +1,15 @@
 import React, { Component } from 'react'
 
-class Timer extends Component  {
-  constructor (props) {
+class Timer extends Component {
+  constructor(props) {
     super(props)
     this.state = {
       count: 180
     }
   }
 
-  render () {
-    const {count} = this.state
+  render() {
+    const { count } = this.state
     return (
       <div>
         <h1>Current Count: {count}</h1>
@@ -18,8 +18,8 @@ class Timer extends Component  {
   }
   // setInterval
   // clearInterval
-  componentDidMount () {
-    const {startCount} = this.props
+  componentDidMount() {
+    const { startCount } = this.props
     this.setState({
       count: startCount
     })
@@ -28,15 +28,15 @@ class Timer extends Component  {
 
 
   doIntervalChange = () => {
-      this.myInterval = setInterval(() => {
+    this.myInterval = setInterval(() => {
       this.setState(prevState => ({
-        count:prevState.count <= 0?"0":prevState.count-1
+        count: prevState.count <= 0 ? "0" : prevState.count - 1
       }))
     }, 1000)
   }
-  
 
-  componentWillUnmount () {
+
+  componentWillUnmount() {
     clearInterval(this.myInterval)
   }
 }
