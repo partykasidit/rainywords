@@ -6,18 +6,18 @@ var randomWords = require('random-words');
 
 //App setup
 var app = express();
-var server = app.listen(4000,function(){
-    console.log('listening to requests on port 4000');
+var server = app.listen(80,function(){
+    console.log('listening to requests on port 80');
 });
 
 //Serve static files
 app.use(express.static('public'));
-app.get('/', function(req, res){
-    res.sendFile(path.join(__dirname, '/public', 'welcome.html'));
-});
-app.get('/game', function(req, res){
-    res.sendFile(path.join(__dirname, '/public', 'game.html'));
-});
+// app.get('/', function(req, res){
+//     res.sendFile(path.join(__dirname, '/public', 'welcome.html'));
+// });
+// app.get('/game', function(req, res){
+//     res.sendFile(path.join(__dirname, '/public', 'game.html'));
+// });
 
 //Socket setup
 var io = socket(server);
@@ -30,37 +30,39 @@ const game = io.of('/game');
 game.on('connection',(socket)=>{
     socket.on('disconnect',()=>{
         players.delete(socket.id);
-        console.log(players);
         game.emit('number_of_players_changed',players.size);
+        game.emit('players_changed',mapToObject(players)); //bug
     });
     socket.on('add_player',(name)=>{
         players.set(socket.id,{
             'username' : name,
             'score' : 0,
         });
-        console.log(players);
         game.emit('number_of_players_changed',players.size);
+        game.emit('players_changed',mapToObject(players));
     });
     socket.on('get_words',(data)=>{
         game.emit('words',getWords(data.duration, data.rate));
     });
     socket.on('increase_point',(amount)=>{
         var currentPlayer = players.get(socket.id);
-        currentPlayer.score += amount;
-        players.set(socket.id,currentPlayer);
-        console.log(players);
+        if(currentPlayer!=undefined) {
+            currentPlayer.score += amount; 
+            players.set(socket.id,currentPlayer);
+            game.emit('score_changed',currentPlayer);
+            game.emit('players_changed',mapToObject(players));
+        }
     });
     socket.on('reset_game',()=>{
         players.forEach((player)=>{
             player.score = 0;
         })
-        console.log(players);
         game.emit('reset_game');
+        game.emit('players_changed',mapToObject(players));
     });
-    // socket.on('get_players',()=>{
-    //     console.log(mapToJson(players));
-    //     game.emit('players',mapToJson(players));
-    // });
+    socket.on('get_players',()=>{
+        game.emit('players_changed',mapToObject(players));
+    });
     socket.on('get_number_of_players',()=>{
         game.emit('number_of_players_changed',players.size);
     });
@@ -81,9 +83,10 @@ function getWords(duration, rate) {
     return response;
 }
 
-function mapToJson(map) {
-    return JSON.stringify(map);
-}
-function jsonToMap(jsonStr) {
-    return new Map(JSON.parse(jsonStr));
+function mapToObject(map) {
+    var response = {};
+    map.forEach((value,key,map)=>{
+        response[key] = value;
+    });
+    return response;
 }
