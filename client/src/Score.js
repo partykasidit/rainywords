@@ -1,4 +1,5 @@
 import React from "react";
+import { socket } from "./socket";
 
 function Score({ players, userId }) {
     return (
@@ -14,12 +15,14 @@ function Score({ players, userId }) {
                 })}
             </li> */}
 
-            <h1>
-                {players !== null &&
-                    `${players[userId].name}: ${players[userId].score}`}
-            </h1>
+            <h1>{players !== null && `${players.name}: ${players.score}`}</h1>
             {/* <h1>{players[oppId].username}: {players[oppId].score}</h1> */}
         </div>
     );
 }
 export default Score;
+
+// <h1>
+//                 {players !== null &&
+//                     `${players.name}: ${players[userId].score}`}
+//             </h1>

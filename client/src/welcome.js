@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { socket } from "./socket";
-
+import Portfolio from "./Portfolio";
 //setup
 //var socket = io.connect('http://localhost:4000');
 function Welcome() {
@@ -56,6 +56,7 @@ function Welcome() {
     return (
         <div className="Welcome">
             <div>
+                <div>{Portfolio}</div>
                 <h1>Rainy Words Game</h1>
                 <form onSubmit={handleSubmit}>
                     <p>Enter your name: </p>

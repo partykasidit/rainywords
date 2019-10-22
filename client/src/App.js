@@ -14,63 +14,103 @@ function App() {
     const [words, setWords] = useState([]);
     const [input, setInput] = useState("");
     const [players, setPlayers] = useState({});
-    const [oppId, setOppId] = useState("");
+    //  const [oppId, setOppId] = useState("");
     const [playerId, setPlayerId] = useState("");
-    const [randomWord, setRandomWord] = useState([]);
+    const [randomWords, setRandomWords] = useState([]);
     const [morePlayer, setMorePlayer] = useState(0);
 
     var duration = 180;
     // initialize timeLeft with the seconds prop
     const [timeLeft, setTimeLeft] = useState(duration);
+    const [showWelcome, setShowWelcome] = useState(true);
     const [showGame, setShowGame] = useState(false);
-    // const [waiting, setWaiting] = userState(false);
+    const [showWaiting, setShowWaiting] = useState(false);
+    const [lobbyPlayers, setLobbyPlayer] = useState(0);
 
     const resetGame = () => {
         setShowGame(true);
-        setTimeLeft(duration);
         setCount(count => 0);
     };
 
+    const handlePlayGame = e => {
+        socket.emit("clickPlay");
+    };
+
+    let inputRef;
     useEffect(() => {
-        // socket.on("setPlayerId", playerId => {
-        //     // console.log("SetPlayerId");
-        //     // console.log(`PlayerId: ${playerId}`);
-        //assume we habe NAME FROM WELCOME
-        //  socket.emit("add_player",name);
+        socket.on("reset_game", () => {
+            console.log("reset the game");
+        });
 
         socket.on("players_changed", players => {
             // every change of players state
             setPlayers(players);
+            console.log(players);
         });
 
-        // show game now
-        // if player.size>2 changing waiting to start
-        // if start then get words
-
-        socket.emit("get_words", {
-            duration: 30,
-            rate: 5
+        socket.on("setPlayerId", playerId => {
+            setPlayerId(playerId);
+            console.log(playerId);
+            setShowWelcome(false);
+            setShowWaiting(true);
         });
+
+        socket.on("number_of_players_changed", lobbyPlayer => {
+            setLobbyPlayer(lobbyPlayer);
+            console.log("loby player :" + lobbyPlayer);
+        });
+
+        socket.on("startGame", () => {
+            console.log("StartGame");
+            // setShowWaiting(false);
+            // setShowGame(true);
+            // so get word
+            // socket on word
+            socket.emit("get_words", {
+                duration: 50, //sec
+                rate: 6 //words per sec
+            });
+            // setTimeLeft(duration);
+        });
+
         socket.on("words", data => {
-            setRandomWord(words);
+            // console.log(data);
+            setRandomWords(() => {
+                console.log("mapping data");
+                return data.map(obj => {
+                    console.log(obj.word);
+                    return obj.word;
+                });
+            });
+            console.log(setRandomWords);
+            setTimeLeft(duration);
+            setShowWaiting(false);
+            setShowGame(true);
         });
-        // word falling down game start
-        //show players
-        //timer stop restart
-
-        // socket.on("updatePlayers", players => {
-        //     console.log("UpdatePlayers");
-        //     console.log(players);
-        //     setPlayers(players);
-        // });
-        // socket.on("startGame", oppId => {
-        //     console.log("StartGame");
-        //     console.log(`OppId: ${oppId}`);
-        //     setOppId(oppId);
-        //     setShowGame(true);
-        //     setTimeLeft(duration);
-        // });
     }, []);
+
+    useEffect(() => {
+        let index = 0;
+        const size = randomWords.length;
+        console.log(size);
+
+        setInterval(() => {
+            console.log(randomWords);
+            setWords(old => [
+                ...old,
+                {
+                    id: index,
+                    word: randomWords[index++ % size],
+                    location: Math.floor(Math.random() * 60) + 20 + "vw"
+                }
+            ]);
+            // console.log(words);
+        }, 3000);
+
+        if (inputRef) {
+            inputRef.focus();
+        }
+    }, [randomWords, setShowGame]);
 
     useEffect(() => {
         if (!timeLeft) return;
@@ -92,7 +132,8 @@ function App() {
                     newWords.push(word);
                 } else {
                     setCount(c => c + 1);
-                    socket.emit("increaseScore", oppId);
+                    // socket.emit("increase_point");
+                    socket.emit("increase_point", 1);
                 }
             }
             return newWords;
@@ -100,35 +141,6 @@ function App() {
         setInput("");
         e.preventDefault();
     };
-    const randomWords = [
-        "Gareth",
-        "Ronaldo",
-        "Falcao",
-        "kkkkk",
-        "Ronaldo",
-        "BigC"
-    ];
-    let inputRef;
-    useEffect(() => {
-        let index = 0;
-        const size = randomWords.length;
-
-        setInterval(() => {
-            setWords(old => [
-                ...old,
-                {
-                    id: index,
-                    word: randomWords[index++ % size],
-                    location: Math.floor(Math.random() * 60) + 20 + "vw"
-                }
-            ]);
-            // console.log(words);
-        }, 5000);
-
-        if (inputRef) {
-            inputRef.focus();
-        }
-    }, []);
 
     let timers = <h1>Timer: {timeLeft}</h1>;
     if (timeLeft === 0) {
@@ -142,33 +154,41 @@ function App() {
 
     return (
         <div className="App">
-            {/* {!showGame && <button onClick={openGame}>Login Already</button>} */}
-            {/* {players !== null && Object.values(players).map(x => {
-        return (<div>Username = {x.username} Score = {x.score}</div>)
-      })} */}
-            {/* <div>
-                {waiting && (
+            Hello{randomWords}
+            <div>
+                {showWaiting && (
                     <div>
-                        
-                        <h1>Welcome,{name} </h1>
+                        <div>
+                            Welcome,
+                            {playerId !== "" && players[playerId].username}
+                        </div>
                         <h1>
-                            {morePlayer <= 2 ? (
-                                <h1> Waiting for more players...</h1>
+                            {lobbyPlayers < 2 ? (
+                                <div> Waiting for more players...</div>
                             ) : (
-                                <button type="button">Play</button>
+                                <button type="button" onClick={handlePlayGame}>
+                                    Play
+                                </button>
                             )}
                         </h1>
                     </div>
                 )}
-            </div> */}
+            </div>
             {showGame && (
                 <header className="App-header">
                     <div style={{ display: "flex-inline" }}>
-                        <Score players={players} userId={playerId} />
+                        <Score players={players} />
                         <div>{timers}</div>
-                        <Score players={players} userId={oppId} />
+                        {/* <Score players={players} userId={oppId} /> */}
                     </div>
-                    <p>{count}</p>
+                    <div>
+                        <p>
+                            {playerId !== "" && players[playerId].username}'s
+                            score:
+                        </p>
+                        <p>{count}</p>
+                    </div>
+
                     <form onSubmit={handleSubmit}>
                         <input
                             onChange={handleInput}
@@ -192,9 +212,8 @@ function App() {
                     ))}
                 </header>
             )}
-
             <div></div>
-            {!showGame && <Welcome />}
+            {showWelcome && <Welcome />}
         </div>
     );
 }
@@ -227,3 +246,62 @@ export default App;
 // welcome "name"
 // add socket
 // in useeffect socket.on to
+
+// show game now
+// if player.size>2 changing waiting to start
+// if start then get words
+
+// word falling down game start
+//show players
+//timer stop restart
+
+// socket.on("updatePlayers", players => {
+//     console.log("UpdatePlayers");
+//     console.log(players);
+//     setPlayers(players);
+// });
+// socket.on("startGame", oppId => {
+//     console.log("StartGame");
+//     console.log(`OppId: ${oppId}`);
+//     setOppId(oppId);
+//     setShowGame(true);
+//     setTimeLeft(duration);
+// });
+
+// socket.on("setPlayerId", playerId => {
+//     // console.log("SetPlayerId");
+//     // console.log(`PlayerId: ${playerId}`);
+//assume we habe NAME FROM WELCOME
+//  socket.emit("add_player",name);
+
+// const randomWords = [
+//     "Gareth",
+//     "Ronaldo",
+//     "Falcao",
+//     "kkkkk",
+//     "Ronaldo",
+//     "BigC"
+// ];
+//let inputRef;
+
+// useEffect(() => {
+
+//     let index = 0;
+//     const size = randomWords.length;
+
+//     setInterval(() => {
+//         setWords(old => [
+//             ...old,
+//             {
+//                 id: index,
+//                 word: randomWords[index++ % size],
+//                 location: Math.floor(Math.random() * 60) + 20 + "vw"
+//             }
+//         ]);
+//         // console.log(words);
+//     }, 3000);
+
+//     if (inputRef) {
+//         inputRef.focus();
+//     }
+// }, []);

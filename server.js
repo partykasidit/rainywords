@@ -35,6 +35,7 @@ game.on("connection", socket => {
         game.emit("players_changed", mapToObject(players)); //bug
     });
     socket.on("add_player", name => {
+        console.log("Welcome " + name);
         players.set(socket.id, {
             íd: socket.id,
             username: name,
@@ -42,10 +43,15 @@ game.on("connection", socket => {
         });
         game.emit("number_of_players_changed", players.size);
         game.emit("players_changed", mapToObject(players));
+        socket.emit("setPlayerId", socket.id); //added
     });
     socket.on("get_words", data => {
         game.emit("words", getWords(data.duration, data.rate));
     });
+    socket.on("clickPlay", () => {
+        game.emit("startGame");
+    }); // added
+
     socket.on("increase_point", amount => {
         var currentPlayer = players.get(socket.id);
         if (currentPlayer != undefined) {
@@ -79,7 +85,8 @@ function getWords(duration, rate) {
         response[i] = {
             word: words[i],
             time: Math.random() * duration, //in seconds
-            position: Math.random() * 100 //%
+            //      position: Math.random() * 100 //%
+            position: Math.floor(Math.random() * 60) + 20 + "vw"
         };
     }
     return response;
