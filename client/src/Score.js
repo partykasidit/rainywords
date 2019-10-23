@@ -1,7 +1,11 @@
 import React from "react";
 import { socket } from "./socket";
 
-function Score({ players, userId }) {
+function Score({ players, playerId }) {
+    // const listItems = players.map(player => (
+    //     <li key={player.username}>{players.score}</li>
+
+    // ));
     return (
         <div className="Score">
             {/* {userId} */}
@@ -15,8 +19,19 @@ function Score({ players, userId }) {
                 })}
             </li> */}
 
-            <h1>{players !== null && `${players.name}: ${players.score}`}</h1>
+            {/* <h1>{players !== null && `${players.name}: ${players.score}`}</h1> */}
             {/* <h1>{players[oppId].username}: {players[oppId].score}</h1> */}
+            <div>
+                {Object.values(players).map(player => {
+                    return (
+                        <ul key={player.id}>
+                            <li>
+                                {player.username}:{player.score}
+                            </li>
+                        </ul>
+                    );
+                })}
+            </div>
         </div>
     );
 }

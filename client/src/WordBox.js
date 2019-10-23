@@ -3,7 +3,7 @@ import "./App.css";
 import posed, { PoseGroup } from "react-pose";
 import { interpolate } from "@popmotion/popcorn";
 
-const DURATION = 3000;
+const DURATION = 5000;
 const WordBox = forwardRef((props, ref) => {
     return (
         <div ref={ref} {...props}>
@@ -33,6 +33,7 @@ export const MovingWordBox = posed(WordBox)({
     top: { y: "0vh" },
     bottom: {
         y: "90vh",
+        //y 94vh
         transition: {
             y: {
                 type: "tween",

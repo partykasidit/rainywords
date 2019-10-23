@@ -61,6 +61,9 @@ game.on("connection", socket => {
             game.emit("players_changed", mapToObject(players));
         }
     });
+
+    socket.on("endGame")
+
     socket.on("reset_game", () => {
         players.forEach(player => {
             player.score = 0;

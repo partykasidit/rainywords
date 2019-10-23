@@ -6,6 +6,7 @@ import Welcome from "./welcome";
 import { socket } from "./socket";
 import Score from "./Score";
 import { pathToFileURL } from "url";
+import Winner from "./Winner";
 
 // const url = "localhost:4000"
 // const socket = socketIOClient(url)
@@ -19,24 +20,32 @@ function App() {
     const [randomWords, setRandomWords] = useState([]);
     const [morePlayer, setMorePlayer] = useState(0);
 
-    var duration = 180;
+    var duration = 10;
     // initialize timeLeft with the seconds prop
     const [timeLeft, setTimeLeft] = useState(duration);
     const [showWelcome, setShowWelcome] = useState(true);
     const [showGame, setShowGame] = useState(false);
     const [showWaiting, setShowWaiting] = useState(false);
     const [lobbyPlayers, setLobbyPlayer] = useState(0);
+    const [showWinner, setShowWinner] = useState(false);
+    const [arrayReceived, setArrayReceived] = useState(0);
 
     const resetGame = () => {
         setShowGame(true);
         setCount(count => 0);
+        socket.emit("reset_game");
+
+        setTimeLeft(duration);
+        setShowWinner(false);
+        setShowWaiting(false);
+        setShowGame(true);
+        //setTimeLeft(duration);
     };
 
     const handlePlayGame = e => {
         socket.emit("clickPlay");
     };
 
-    let inputRef;
     useEffect(() => {
         socket.on("reset_game", () => {
             console.log("reset the game");
@@ -51,8 +60,11 @@ function App() {
         socket.on("setPlayerId", playerId => {
             setPlayerId(playerId);
             console.log(playerId);
+
             setShowWelcome(false);
             setShowWaiting(true);
+
+            // console.log(players[playerId].id);
         });
 
         socket.on("number_of_players_changed", lobbyPlayer => {
@@ -71,24 +83,43 @@ function App() {
                 rate: 6 //words per sec
             });
             // setTimeLeft(duration);
+
+            socket.on("words", data => {
+                // console.log(data);
+                if (arrayReceived !== 1) {
+                    setRandomWords(() => {
+                        console.log("mapping data");
+                        return data.map(obj => {
+                            console.log(obj.word);
+                            return obj.word;
+                        });
+                    });
+                    setArrayReceived(c => c + 1);
+                }
+                console.log(setRandomWords);
+                setTimeLeft(duration);
+                setShowWaiting(false);
+                setShowGame(true);
+            });
         });
 
-        socket.on("words", data => {
-            // console.log(data);
-            setRandomWords(() => {
-                console.log("mapping data");
-                return data.map(obj => {
-                    console.log(obj.word);
-                    return obj.word;
-                });
-            });
-            console.log(setRandomWords);
-            setTimeLeft(duration);
-            setShowWaiting(false);
-            setShowGame(true);
-        });
+        // socket.on("words", data => {
+        //     // console.log(data);
+        //     setRandomWords(() => {
+        //         console.log("mapping data");
+        //         return data.map(obj => {
+        //             console.log(obj.word);
+        //             return obj.word;
+        //         });
+        //     });
+        //     console.log(setRandomWords);
+        //     setTimeLeft(duration);
+        //     setShowWaiting(false);
+        //     setShowGame(true);
+        // });
     }, []);
 
+    let inputRef;
     useEffect(() => {
         let index = 0;
         const size = randomWords.length;
@@ -105,21 +136,28 @@ function App() {
                 }
             ]);
             // console.log(words);
-        }, 3000);
+        }, 5000);
 
         if (inputRef) {
             inputRef.focus();
         }
-    }, [randomWords, setShowGame]);
+    }, [setShowGame, randomWords]);
+    //randomWords
 
+    //for timer
     useEffect(() => {
         if (!timeLeft) return;
+        if (timeLeft === 0) {
+            setShowWinner(true);
+        }
+
         const intervalId = setInterval(() => {
-            setTimeLeft(timeLeft - 1);
+            setTimeLeft(timeLeft => timeLeft - 1);
         }, 1000);
+
         return () => clearInterval(intervalId);
     }, [timeLeft, showGame]);
-
+    // showGame
     const handleInput = e => {
         setInput(e.target.value);
     };
@@ -141,16 +179,6 @@ function App() {
         setInput("");
         e.preventDefault();
     };
-
-    let timers = <h1>Timer: {timeLeft}</h1>;
-    if (timeLeft === 0) {
-        timers = (
-            <div>
-                <h1>GameOver</h1>
-                <button onClick={resetGame}>Play Again</button>
-            </div>
-        );
-    }
 
     return (
         <div className="App">
@@ -177,16 +205,26 @@ function App() {
             {showGame && (
                 <header className="App-header">
                     <div style={{ display: "flex-inline" }}>
-                        <Score players={players} />
-                        <div>{timers}</div>
+                        <Score players={players} playerId={playerId} />
+                        {/* <div>{timers}</div> */}
+
+                        {showWinner ? (
+                            <div>
+                                <h1>GameOver</h1>
+                                <Winner players={players} />
+                                <button onClick={resetGame}>Play Again</button>
+                            </div>
+                        ) : (
+                            <h1>Timer: {timeLeft}</h1>
+                        )}
+
                         {/* <Score players={players} userId={oppId} /> */}
                     </div>
                     <div>
                         <p>
                             {playerId !== "" && players[playerId].username}'s
-                            score:
+                            score: {count}
                         </p>
-                        <p>{count}</p>
                     </div>
 
                     <form onSubmit={handleSubmit}>
