@@ -10,7 +10,6 @@ import Winner from "./Winner";
 // const url = "localhost:4000"
 // const socket = socketIOClient(url)
 function App() {
-    
     const [count, setCount] = useState(0);
     const [words, setWords] = useState([]);
     // console.log(data);
@@ -21,7 +20,7 @@ function App() {
     const [randomWords, setRandomWords] = useState([]);
     const [morePlayer, setMorePlayer] = useState(0);
 
-    var duration = 10;
+    var duration = 300;
     // initialize timeLeft with the seconds prop
     const [timeLeft, setTimeLeft] = useState(-1);
     const [showWelcome, setShowWelcome] = useState(true);
@@ -30,8 +29,6 @@ function App() {
     const [lobbyPlayers, setLobbyPlayer] = useState(0);
     const [showWinner, setShowWinner] = useState(false);
     const [arrayReceived, setArrayReceived] = useState(false);
-
-
 
     const resetGame = () => {
         socket.emit("reset_game");
@@ -177,6 +174,20 @@ function App() {
         e.preventDefault();
     };
 
+    const timer = timeLeft => {
+        var minutes = Math.floor(timeLeft / 60);
+        var second = timeLeft % 60;
+
+        if (second < 10) {
+            second = "0" + second;
+        }
+        return (
+            <h1>
+                Timer: {minutes}:{second}
+            </h1>
+        );
+    };
+
     // if (timeLeft === 0) {
     //     setShowWinner(true);
     // }
@@ -187,15 +198,27 @@ function App() {
             <div>
                 {showWaiting && (
                     <div>
-                        <div>
-                            Welcome,
-                            {playerId !== "" && players[playerId].username}
+                        <div className="welcomePlayer">
+                            <div>
+                                {" "}
+                                Welcome,
+                                {playerId !== "" && players[playerId].username}
+                            </div>
                         </div>
                         <h1>
                             {lobbyPlayers < 2 ? (
-                                <div> Waiting for more players...</div>
+                                <div className="Waiting">
+                                    Waiting for more players...
+                                    <div>
+                                        <img src="/cat.gif" alt="loading..." />
+                                    </div>
+                                </div>
                             ) : (
-                                <button type="button" onClick={handlePlayGame}>
+                                <button
+                                    id="play"
+                                    type="button"
+                                    onClick={handlePlayGame}
+                                >
                                     Play
                                 </button>
                             )}
@@ -210,13 +233,14 @@ function App() {
                         {/* <div>{timers}</div> */}
 
                         {showWinner ? (
-                            <div>
+                            <div className="EndGame">
                                 <h1>GameOver</h1>
                                 <Winner players={players} />
                                 <button onClick={resetGame}>Play Again</button>
                             </div>
                         ) : (
-                            <h1>Timer: {timeLeft}</h1>
+                            // <h1>Timer: {timeLeft}</h1>
+                            <h1>{timer(timeLeft)}</h1>
                         )}
 
                         {/* <Score players={players} userId={oppId} /> */}

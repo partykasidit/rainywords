@@ -12,7 +12,7 @@ function Welcome() {
     const [waiting, setWaiting] = useState(false);
     const [morePlayer, setMorePlayer] = useState(0);
     const [myname, setMyName] = useState("");
- //   const ambulance = new Audio('/amb.mp3')
+    const ambulance = new Audio("/amb.mp3");
 
     const sendMessage = message => {
         // socket.emit("addPlayer", message);
@@ -21,6 +21,7 @@ function Welcome() {
         setWaiting(true); //
         setMyName(message);
         setMorePlayer(c => c + 1);
+        ambulance.play();
     };
 
     const changeInput = e => {
