@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { socket } from "./socket";
-import Portfolio from "./Portfolio";
 import "./welcome.css";
 //setup
 //var socket = io.connect('http://localhost:4000');
@@ -13,6 +12,7 @@ function Welcome() {
     const [waiting, setWaiting] = useState(false);
     const [morePlayer, setMorePlayer] = useState(0);
     const [myname, setMyName] = useState("");
+ //   const ambulance = new Audio('/amb.mp3')
 
     const sendMessage = message => {
         // socket.emit("addPlayer", message);
@@ -36,7 +36,6 @@ function Welcome() {
     return (
         <div className="Welcome">
             <div>
-                <div>{Portfolio}</div>
                 <h1>Rainy Words Game</h1>
                 <form onSubmit={handleSubmit}>
                     <p>Enter your name: </p>

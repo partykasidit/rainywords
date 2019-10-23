@@ -29,6 +29,10 @@ var players = new Map();
 //Game server
 const game = io.of("/game");
 game.on("connection", socket => {
+    setInterval(() => {
+        socket.emit("1sec");
+    }, 1000);
+
     socket.on("disconnect", () => {
         players.delete(socket.id);
         game.emit("number_of_players_changed", players.size);
@@ -45,11 +49,16 @@ game.on("connection", socket => {
         game.emit("players_changed", mapToObject(players));
         socket.emit("setPlayerId", socket.id); //added
     });
+
     socket.on("get_words", data => {
         game.emit("words", getWords(data.duration, data.rate));
     });
     socket.on("clickPlay", () => {
-        game.emit("startGame");
+        let i = 0;
+        if (i < 1) {
+            game.emit("startGame");
+            i = i + 1;
+        }
     }); // added
 
     socket.on("increase_point", amount => {

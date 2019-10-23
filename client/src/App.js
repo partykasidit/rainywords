@@ -5,14 +5,15 @@ import Timer from "./Timer";
 import Welcome from "./welcome";
 import { socket } from "./socket";
 import Score from "./Score";
-import { pathToFileURL } from "url";
 import Winner from "./Winner";
 
 // const url = "localhost:4000"
 // const socket = socketIOClient(url)
 function App() {
+    
     const [count, setCount] = useState(0);
     const [words, setWords] = useState([]);
+    // console.log(data);
     const [input, setInput] = useState("");
     const [players, setPlayers] = useState({});
     //  const [oppId, setOppId] = useState("");
@@ -22,17 +23,18 @@ function App() {
 
     var duration = 10;
     // initialize timeLeft with the seconds prop
-    const [timeLeft, setTimeLeft] = useState(duration);
+    const [timeLeft, setTimeLeft] = useState(-1);
     const [showWelcome, setShowWelcome] = useState(true);
     const [showGame, setShowGame] = useState(false);
     const [showWaiting, setShowWaiting] = useState(false);
     const [lobbyPlayers, setLobbyPlayer] = useState(0);
     const [showWinner, setShowWinner] = useState(false);
-    const [arrayReceived, setArrayReceived] = useState(0);
+    const [arrayReceived, setArrayReceived] = useState(false);
+
+
 
     const resetGame = () => {
         socket.emit("reset_game");
-
         //setTimeLeft(duration);
     };
 
@@ -41,6 +43,11 @@ function App() {
     };
 
     useEffect(() => {
+        socket.on("1sec", () => {
+            setTimeLeft(timeLeft => timeLeft - 1);
+            console.log("1sec");
+        });
+
         socket.on("reset_game", () => {
             console.log("reset the game");
             setTimeLeft(duration);
@@ -73,35 +80,38 @@ function App() {
 
         socket.on("startGame", () => {
             console.log("StartGame");
-            // setShowWaiting(false);
-            // setShowGame(true);
-            // so get word
-            // socket on word
+
             socket.emit("get_words", {
-                duration: 50, //sec
-                rate: 6 //words per sec
+                duration: 60, //sec
+                rate: 5 //words per sec
             });
-            // setTimeLeft(duration);
 
             socket.on("words", data => {
                 // console.log(data);
-                if (arrayReceived < 1) {
-                    setRandomWords(() => {
-                        console.log("mapping data");
-                        return data.map(obj => {
-                            console.log(obj.word);
-                            return obj.word;
-                        });
+                setRandomWords(() => {
+                    console.log("mapping data");
+                    return data.map(obj => {
+                        console.log(obj.word);
+                        return obj.word;
                     });
-                    setArrayReceived(c => c + 1);
-                }
-                console.log(setRandomWords);
-                setTimeLeft(duration);
-                setShowWaiting(false);
-                setShowGame(true);
-            });
-        });
+                });
 
+                // setShowWaiting(false);
+                // setShowGame(true);
+                // so get word
+                // socket on word
+                // socket.emit("get_words", {
+                //     duration: 50, //sec
+                //     rate: 6 //words per sec
+                // });
+                // setTimeLeft(duration);
+            });
+
+            console.log(setRandomWords);
+            setTimeLeft(duration);
+            setShowWaiting(false);
+            setShowGame(true);
+        });
     }, []);
 
     // useEffect(()=>{
@@ -125,24 +135,18 @@ function App() {
                 }
             ]);
             // console.log(words);
-        }, 5000);
+        }, 3000);
 
         if (inputRef) {
             inputRef.focus();
         }
-    }, [setShowGame]);
-    //randomWords
+    }, [randomWords, showGame]);
+    // console.log(data);
 
     //for timer
     useEffect(() => {
         if (!timeLeft) return;
-
-        const intervalId = setInterval(() => {
-            setTimeLeft(timeLeft => timeLeft - 1);
-        }, 1000);
-
-        return () => clearInterval(intervalId);
-    }, [timeLeft, showGame]);
+    }, [timeLeft]); //showGame
 
     useEffect(() => {
         if (timeLeft === 0) {
@@ -247,111 +251,9 @@ function App() {
                     ))}
                 </header>
             )}
-            <div></div>
             {showWelcome && <Welcome />}
         </div>
     );
 }
 
 export default App;
-
-{
-    /* <p>
-          You learn React {count} time
-        </p>
-        <a
-          className="App-link"
-          href="#"
-          onClick={() => setCount(count+1) }
-        >
-          Learn React
-        </a> */
-}
-
-// 1 page welcome
-// game
-// input
-// play no socket page
-// when get name
-
-// send name to second page
-
-// 2 page use app.js
-// socket app player
-// welcome "name"
-// add socket
-// in useeffect socket.on to
-
-// show game now
-// if player.size>2 changing waiting to start
-// if start then get words
-
-// word falling down game start
-//show players
-//timer stop restart
-
-// socket.on("updatePlayers", players => {
-//     console.log("UpdatePlayers");
-//     console.log(players);
-//     setPlayers(players);
-// });
-// socket.on("startGame", oppId => {
-//     console.log("StartGame");
-//     console.log(`OppId: ${oppId}`);
-//     setOppId(oppId);
-//     setShowGame(true);
-//     setTimeLeft(duration);
-// });
-
-// socket.on("setPlayerId", playerId => {
-//     // console.log("SetPlayerId");
-//     // console.log(`PlayerId: ${playerId}`);
-//assume we habe NAME FROM WELCOME
-//  socket.emit("add_player",name);
-
-// const randomWords = [
-//     "Gareth",
-//     "Ronaldo",
-//     "Falcao",
-//     "kkkkk",
-//     "Ronaldo",
-//     "BigC"
-// ];
-//let inputRef;
-
-// useEffect(() => {
-
-//     let index = 0;
-//     const size = randomWords.length;
-
-//     setInterval(() => {
-//         setWords(old => [
-//             ...old,
-//             {
-//                 id: index,
-//                 word: randomWords[index++ % size],
-//                 location: Math.floor(Math.random() * 60) + 20 + "vw"
-//             }
-//         ]);
-//         // console.log(words);
-//     }, 3000);
-
-//     if (inputRef) {
-//         inputRef.focus();
-//     }
-// }, []);
-
-  // socket.on("words", data => {
-        //     // console.log(data);
-        //     setRandomWords(() => {
-        //         console.log("mapping data");
-        //         return data.map(obj => {
-        //             console.log(obj.word);
-        //             return obj.word;
-        //         });
-        //     });
-        //     console.log(setRandomWords);
-        //     setTimeLeft(duration);
-        //     setShowWaiting(false);
-        //     setShowGame(true);
-        // });
