@@ -35,6 +35,7 @@ function Welcome() {
     };
 
     return (
+        
         <div className="Welcome">
             <div>
                 <h1>Rainy Words Game</h1>
@@ -47,7 +48,7 @@ function Welcome() {
                     ></input>
                     <br />
                     <button id="playbtn" type="button" onClick={handleSubmit}>
-                        Play
+                        Play Online
                     </button>
                 </form>
             </div>

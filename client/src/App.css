@@ -53,3 +53,11 @@
     font-size: 80%;
     font-style: normal;
 }
+
+#singlePlayer {
+    background: red;
+}
+#singlePlayerMessage {
+    font-size: 80%;
+    font-style: Nunito;
+}

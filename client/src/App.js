@@ -6,6 +6,7 @@ import Welcome from "./welcome";
 import { socket } from "./socket";
 import Score from "./Score";
 import Winner from "./Winner";
+import SinglePlayer from "./SinglePlayer";
 
 // const url = "localhost:4000"
 // const socket = socketIOClient(url)
@@ -29,6 +30,14 @@ function App() {
     const [lobbyPlayers, setLobbyPlayer] = useState(0);
     const [showWinner, setShowWinner] = useState(false);
     const [arrayReceived, setArrayReceived] = useState(false);
+    const [showSinglePlayer, setShowSinglePlayer] = useState(false);
+    const [alternating, setAlternating] = useState(0);
+
+    const playSinglePlayer = () => {
+        setShowSinglePlayer(true);
+        setShowWelcome(false);
+        setTimeLeft(duration);
+    };
 
     const resetGame = () => {
         socket.emit("reset_game");
@@ -42,6 +51,9 @@ function App() {
     useEffect(() => {
         socket.on("1sec", () => {
             setTimeLeft(timeLeft => timeLeft - 1);
+            if (!showWaiting) {
+                setAlternating(alternating => alternating + 1);
+            }
             console.log("1sec");
         });
 
@@ -192,9 +204,51 @@ function App() {
     //     setShowWinner(true);
     // }
 
+    let mystyle = {};
+    let style2 = {};
+
+    if (alternating % 4 === 0) {
+        mystyle = {
+            color: "purple",
+            backgroundColor: "pink",
+            padding: "5px"
+        };
+        style2 = {
+            color: "green"
+        };
+    } else if (alternating % 3 === 0) {
+        mystyle = {
+            color: "black",
+            backgroundColor: "DodgerBlue",
+            padding: "10px"
+        };
+        style2 = {
+            color: "yellow"
+        };
+    } else if (alternating % 2 === 0) {
+        mystyle = {
+            color: "green",
+            backgroundColor: "yellow",
+            padding: "15px"
+        };
+        style2 = {
+            color: "purple"
+        };
+    } else {
+        mystyle = {
+            color: "orange",
+            backgroundColor: "red",
+            padding: "20px"
+        };
+        style2 = {
+            color: "red"
+        };
+    }
+
     return (
         <div className="App">
-            Hello{randomWords}
+            {/* Hello{randomWords} */}
+            {showSinglePlayer && <SinglePlayer />}
             <div>
                 {showWaiting && (
                     <div>
@@ -229,7 +283,11 @@ function App() {
             {showGame && (
                 <header className="App-header">
                     <div style={{ display: "flex-inline" }}>
-                        <Score players={players} playerId={playerId} />
+                        <Score
+                            className="showScore"
+                            players={players}
+                            playerId={playerId}
+                        />
                         {/* <div>{timers}</div> */}
 
                         {showWinner ? (
@@ -275,7 +333,27 @@ function App() {
                     ))}
                 </header>
             )}
-            {showWelcome && <Welcome />}
+            {showWelcome && (
+                <div>
+                    {" "}
+                    <div>
+                        <Welcome />
+                    </div>
+                    <div>
+                        <button
+                            style={mystyle}
+                            id="singlePlayer"
+                            type="button"
+                            onClick={playSinglePlayer}
+                        >
+                            Play SinglePlayer
+                        </button>
+                        <div id="singlePlayerMessage" style={style2}>
+                            Single Player is very Hardcore and have alot of bugs
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

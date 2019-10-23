@@ -84,6 +84,10 @@ game.on("connection", socket => {
     socket.on("get_number_of_players", () => {
         game.emit("number_of_players_changed", players.size);
     });
+
+    // socket.on("msgToServer", (players,text) => {
+    //     socket.emit("msgToClient", chatRecord);
+    // });
 });
 
 //Set time and position for random words

@@ -8,27 +8,14 @@ function Score({ players, playerId }) {
     // ));
     return (
         <div className="Score">
-            {/* {userId} */}
-            {/* <li>
-                {Object.values(players).map(val => {
-                    return (
-                        <div>
-                            {val.id} + {val.name} + {val.score}
-                        </div>
-                    );
-                })}
-            </li> */}
-
-            {/* <h1>{players !== null && `${players.name}: ${players.score}`}</h1> */}
-            {/* <h1>{players[oppId].username}: {players[oppId].score}</h1> */}
             <div>
                 {Object.values(players).map(player => {
                     return (
-                        <ul key={player.id}>
+                        <div key={player.id}>
                             <li>
                                 {player.username}:{player.score}
                             </li>
-                        </ul>
+                        </div>
                     );
                 })}
             </div>
@@ -41,3 +28,25 @@ export default Score;
 //                 {players !== null &&
 //                     `${players.name}: ${players[userId].score}`}
 //             </h1>
+
+{
+    /* {userId} */
+}
+{
+    /* <li>
+                {Object.values(players).map(val => {
+                    return (
+                        <div>
+                            {val.id} + {val.name} + {val.score}
+                        </div>
+                    );
+                })}
+            </li> */
+}
+
+{
+    /* <h1>{players !== null && `${players.name}: ${players.score}`}</h1> */
+}
+{
+    /* <h1>{players[oppId].username}: {players[oppId].score}</h1> */
+}
