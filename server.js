@@ -62,8 +62,6 @@ game.on("connection", socket => {
         }
     });
 
-    socket.on("endGame")
-
     socket.on("reset_game", () => {
         players.forEach(player => {
             player.score = 0;
