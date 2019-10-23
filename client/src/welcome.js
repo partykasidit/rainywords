@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { socket } from "./socket";
 import Portfolio from "./Portfolio";
+import "./welcome.css";
 //setup
 //var socket = io.connect('http://localhost:4000');
 function Welcome() {
@@ -32,27 +33,6 @@ function Welcome() {
         e.preventDefault();
     };
 
-    // const handleClick = e => {
-    //     socket.emit("add_player",name);
-
-    // };
-    // {(morePlayer <= 2)?(<h1> Waiting for more players...</h1>):(<button type="button">Play</button>)}
-
-    // const buffer = <h1> Waiting for more players...</h1>;
-    // if (morePlayer <= 2) {
-    //     buffer = (
-    //         <h1>
-    //             <button type="button">Play</button>
-    //         </h1>
-    //     );
-    // }
-    // {
-    //     morePlayer <= 2 ? (
-    //         <h1> Waiting for more players...</h1>
-    //     ) : (
-    //         <button type="button">Play</button>
-    //     );
-    // }
     return (
         <div className="Welcome">
             <div>
@@ -66,7 +46,7 @@ function Welcome() {
                         onChange={changeInput}
                     ></input>
                     <br />
-                    <button type="button" onClick={handleSubmit}>
+                    <button id="playbtn" type="button" onClick={handleSubmit}>
                         Play
                     </button>
                 </form>
@@ -90,3 +70,25 @@ export default Welcome;
 //     </div>
 // )}
 // </div>
+
+// const handleClick = e => {
+//     socket.emit("add_player",name);
+
+// };
+// {(morePlayer <= 2)?(<h1> Waiting for more players...</h1>):(<button type="button">Play</button>)}
+
+// const buffer = <h1> Waiting for more players...</h1>;
+// if (morePlayer <= 2) {
+//     buffer = (
+//         <h1>
+//             <button type="button">Play</button>
+//         </h1>
+//     );
+// }
+// {
+//     morePlayer <= 2 ? (
+//         <h1> Waiting for more players...</h1>
+//     ) : (
+//         <button type="button">Play</button>
+//     );
+// }

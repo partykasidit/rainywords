@@ -31,14 +31,8 @@ function App() {
     const [arrayReceived, setArrayReceived] = useState(0);
 
     const resetGame = () => {
-        setShowGame(true);
-        setCount(count => 0);
         socket.emit("reset_game");
 
-        setTimeLeft(duration);
-        setShowWinner(false);
-        setShowWaiting(false);
-        setShowGame(true);
         //setTimeLeft(duration);
     };
 
@@ -49,6 +43,12 @@ function App() {
     useEffect(() => {
         socket.on("reset_game", () => {
             console.log("reset the game");
+            setTimeLeft(duration);
+            setShowGame(true);
+            setCount(count => 0);
+            setShowWinner(false);
+            setShowWaiting(false);
+            setShowGame(true);
         });
 
         socket.on("players_changed", players => {
@@ -60,7 +60,6 @@ function App() {
         socket.on("setPlayerId", playerId => {
             setPlayerId(playerId);
             console.log(playerId);
-
             setShowWelcome(false);
             setShowWaiting(true);
 
@@ -86,7 +85,7 @@ function App() {
 
             socket.on("words", data => {
                 // console.log(data);
-                if (arrayReceived !== 1) {
+                if (arrayReceived < 1) {
                     setRandomWords(() => {
                         console.log("mapping data");
                         return data.map(obj => {
@@ -103,21 +102,11 @@ function App() {
             });
         });
 
-        // socket.on("words", data => {
-        //     // console.log(data);
-        //     setRandomWords(() => {
-        //         console.log("mapping data");
-        //         return data.map(obj => {
-        //             console.log(obj.word);
-        //             return obj.word;
-        //         });
-        //     });
-        //     console.log(setRandomWords);
-        //     setTimeLeft(duration);
-        //     setShowWaiting(false);
-        //     setShowGame(true);
-        // });
     }, []);
+
+    // useEffect(()=>{
+
+    // })
 
     let inputRef;
     useEffect(() => {
@@ -141,15 +130,12 @@ function App() {
         if (inputRef) {
             inputRef.focus();
         }
-    }, [setShowGame, randomWords]);
+    }, [setShowGame]);
     //randomWords
 
     //for timer
     useEffect(() => {
         if (!timeLeft) return;
-        if (timeLeft === 0) {
-            setShowWinner(true);
-        }
 
         const intervalId = setInterval(() => {
             setTimeLeft(timeLeft => timeLeft - 1);
@@ -157,6 +143,13 @@ function App() {
 
         return () => clearInterval(intervalId);
     }, [timeLeft, showGame]);
+
+    useEffect(() => {
+        if (timeLeft === 0) {
+            setShowWinner(true);
+        }
+    }, [timeLeft]);
+
     // showGame
     const handleInput = e => {
         setInput(e.target.value);
@@ -179,6 +172,10 @@ function App() {
         setInput("");
         e.preventDefault();
     };
+
+    // if (timeLeft === 0) {
+    //     setShowWinner(true);
+    // }
 
     return (
         <div className="App">
@@ -343,3 +340,18 @@ export default App;
 //         inputRef.focus();
 //     }
 // }, []);
+
+  // socket.on("words", data => {
+        //     // console.log(data);
+        //     setRandomWords(() => {
+        //         console.log("mapping data");
+        //         return data.map(obj => {
+        //             console.log(obj.word);
+        //             return obj.word;
+        //         });
+        //     });
+        //     console.log(setRandomWords);
+        //     setTimeLeft(duration);
+        //     setShowWaiting(false);
+        //     setShowGame(true);
+        // });

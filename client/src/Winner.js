@@ -25,13 +25,6 @@ function findWinner(players) {
             winner = player.username;
         }
     });
-
-    const showListofWinner = (
-        <div>
-            The Winner is {winner} with score: {max} !!!!!
-        </div>
-    );
-
     return (
         <div>
             The Winner is {winner} with score: {max} !!!!!
