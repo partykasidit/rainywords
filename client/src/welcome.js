@@ -48,6 +48,7 @@ function Welcome() {
 
     return (
         <div className="Welcome">
+            <img src="/hina.png" id="hina"/>
             <div>
                 <h1>Rainy Words Game</h1>
                 <form onSubmit={handleSubmit}>

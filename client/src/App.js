@@ -230,7 +230,7 @@ function App() {
         mystyle = {
             color: "black",
             backgroundColor: "DodgerBlue",
-            padding: "10px"
+            padding: "7px"
         };
         style2 = {
             color: "yellow"
@@ -239,7 +239,7 @@ function App() {
         mystyle = {
             color: "green",
             backgroundColor: "yellow",
-            padding: "15px"
+            padding: "9px"
         };
         style2 = {
             color: "purple"
@@ -248,7 +248,7 @@ function App() {
         mystyle = {
             color: "orange",
             backgroundColor: "red",
-            padding: "20px"
+            padding: "11px"
         };
         style2 = {
             color: "red"
@@ -280,7 +280,7 @@ function App() {
                         {lobbyPlayers < 2 ? (
                             <div className="Waiting">
                                 Waiting for more players...
-                                <div>
+                                <div id="bugcatlul">
                                     <img src="/cat.gif" alt="loading..." />
                                 </div>
                             </div>
@@ -294,7 +294,13 @@ function App() {
                             </button>
                         )}
                     </h1>
-                    <Chat players={players} playerId={playerId} />
+                    <audio controls>
+                        <source src="/music.mp3" type="audio/mpeg"></source>
+                    </audio>
+
+                    <div className="chat_box">
+                        <Chat players={players} playerId={playerId} />
+                    </div>
                 </>
             )}
             {showGame && (
@@ -312,7 +318,9 @@ function App() {
                             <div className="EndGame">
                                 <h1>GameOver</h1>
                                 <Winner players={players} />
-                                <button onClick={resetGame}>Play Again</button>
+                                <button onClick={resetGame} id="playagain">
+                                    Play Again
+                                </button>
                             </div>
                         ) : (
                             // <h1>Timer: {timeLeft}</h1>
@@ -359,7 +367,7 @@ function App() {
                     <div className="singlePlayer ">
                         <button
                             style={mystyle}
-                            id="singlePlayer"
+                            id="singlePlayerButton"
                             type="button"
                             onClick={playSinglePlayer}
                         >
