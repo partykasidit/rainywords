@@ -30,7 +30,7 @@ function SinglePlayer() {
 
     // ));
     var duration = 300;
-    const myRandomWords = [
+    const randomWords = [
         "Gareth",
         "Ronaldo",
         "Falcao",
@@ -64,35 +64,33 @@ function SinglePlayer() {
     };
 
     let inputRef;
+    let counter = 0;
     useEffect(() => {
-        let index = 0;
-        const size = myRandomWords.length;
-        console.log(size);
+        const size = randomWords.length;
 
-        setInterval(() => {
-            console.log(myRandomWords);
-            setWords(old => [
-                ...old,
-                {
-                    id: index,
-                    word: myRandomWords[index++ % size],
-                    location: Math.floor(Math.random() * 60) + 20 + "vw"
-                }
-            ]);
+        const loop = setInterval(() => {
+            const delay = Math.floor(Math.random() * 100) + 100; //Random delay
+            const n = counter++;
+            console.log(n);
+            setTimeout(() => {
+                setWords(old => [
+                    ...old,
+                    {
+                        id: n,
+                        word: randomWords[n % size],
+                        location: Math.floor(Math.random() * 60) + 20 + "vw",
+                        destroyed: false
+                    }
+                ]);
+            }, delay);
             // console.log(words);
-        }, 3000);
+        }, 50); // Spam Rate
 
         if (inputRef) {
             inputRef.focus();
         }
-    }, [myRandomWords, setShowGame]);
-    // console.log(data);
-
-    useEffect(() => {
-        if (timeLeft === 0) {
-            setShowWinner(true);
-        }
-    }, [timeLeft]);
+        return () => clearInterval(loop);
+    }, [showWinner]);
 
     const handleInput = e => {
         setInput(e.target.value);
@@ -105,22 +103,30 @@ function SinglePlayer() {
                 if (word.word !== input) {
                     newWords.push(word);
                 } else {
+                    newWords.push({ ...word, destroyed: true });
                     setCount(c => c + 1);
-                    // socket.emit("increase_point");
+                    socket.emit("increase_point", 1);
                 }
             }
             return newWords;
         });
         setInput("");
+
         e.preventDefault();
     };
+
+    useEffect(() => {
+        if (timeLeft === 0) {
+            setShowWinner(true);
+        }
+    }, [timeLeft]);
 
     useEffect(() => {
         if (!timeLeft) return;
 
         const intervalId = setInterval(() => {
             setTimeLeft(timeLeft => timeLeft - 1);
-        }, 5000);
+        }, 1000);
 
         return () => clearInterval(intervalId);
     }, [timeLeft]); //showGame
@@ -155,7 +161,7 @@ function SinglePlayer() {
                 <p>{count}</p>
             </div>
 
-            <form className = "d" onSubmit={handleSubmit}>
+            <form className="d" onSubmit={handleSubmit}>
                 <input
                     onChange={handleInput}
                     value={input}
@@ -165,12 +171,13 @@ function SinglePlayer() {
                 />
             </form>
 
-            {words.map(({ word, location, id }, idx) => (
-                <CoolBox 
-                    className="e"
+            {words.map(({ word, location, id, destroyed }, idx) => (
+                <CoolBox
+                    className="thebox"
                     word={word}
                     location={location}
-                    key={idx}
+                    key={id}
+                    destroyed={destroyed}
                     onDropped={() =>
                         setWords(old => old.filter(w => w.id !== id))
                     }

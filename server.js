@@ -25,6 +25,7 @@ var io = socket(server);
 
 //Initialize game variables
 var players = new Map();
+let chatArray = [];
 
 //Game server
 const game = io.of("/game");
@@ -84,6 +85,26 @@ game.on("connection", socket => {
     socket.on("get_number_of_players", () => {
         game.emit("number_of_players_changed", players.size);
     });
+
+    socket.on("ChatMessage", text => {
+        var player = players.get(socket.id);
+        console.log(player);
+        console.log(text);
+        // hey
+        if (player != undefined) {
+            chatArray.push(text);
+            game.emit("messageToClient", chatArray);
+            game.emit("players_changed", mapToObject(players));
+        }
+    });
+
+    socket.on("UpdateChat", () => {
+        game.emit("messageToClient", chatArray);
+    });
+
+    // socket.on("sent-message", (players, message) => {
+    //     game.emit("new-message", message);
+    // });
 
     // socket.on("msgToServer", (players,text) => {
     //     socket.emit("msgToClient", chatRecord);

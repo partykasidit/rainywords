@@ -3,7 +3,7 @@ import "./App.css";
 import posed, { PoseGroup } from "react-pose";
 import { interpolate } from "@popmotion/popcorn";
 
-const DURATION = 3000;
+const DURATION = 4000;
 const WordBox = forwardRef((props, ref) => {
     return (
         <div ref={ref} {...props}>

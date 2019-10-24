@@ -7,6 +7,7 @@ import { socket } from "./socket";
 import Score from "./Score";
 import Winner from "./Winner";
 import SinglePlayer from "./SinglePlayer";
+import Chat from "./Chat";
 
 // const url = "localhost:4000"
 // const socket = socketIOClient(url)
@@ -21,8 +22,8 @@ function App() {
     const [randomWords, setRandomWords] = useState([]);
     const [morePlayer, setMorePlayer] = useState(0);
 
-    var duration = 10;
-    // initialize timeLeft with the seconds prop
+    var duration = 60;
+    // initialize timeLeft wsith the seconds prop
     const [timeLeft, setTimeLeft] = useState(-1);
     const [showWelcome, setShowWelcome] = useState(true);
     const [showGame, setShowGame] = useState(false);
@@ -204,7 +205,7 @@ function App() {
         }
         return (
             <h1>
-                Timer: {minutes}:{second}
+                {minutes}:{second}
             </h1>
         );
     };
@@ -285,6 +286,7 @@ function App() {
                             </button>
                         )}
                     </h1>
+                    <Chat players={players} playerId={playerId} />
                 </>
             )}
             {showGame && (
