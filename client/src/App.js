@@ -136,7 +136,6 @@ function App() {
             const loop = setInterval(() => {
                 const delay = Math.floor(Math.random() * 100) + 100; //Random delay
                 const n = counter++;
-                console.log(n);
                 setTimeout(() => {
                     setWords(old => [
                         ...old,
@@ -175,7 +174,7 @@ function App() {
     const handleInput = e => {
         setInput(e.target.value);
     };
-
+    let points;
     const handleSubmit = e => {
         if (!showWinner && showGame) {
             setWords(oldWords => {
@@ -184,9 +183,11 @@ function App() {
                     if (word.word !== input) {
                         newWords.push(word);
                     } else {
+                        setCount(c => c + points);
+                        socket.emit("increase_point", points);
                         newWords.push({ ...word, destroyed: true });
-                        setCount(c => c + 1);
-                        socket.emit("increase_point", 1);
+                        // setCount(c => c + word.length);
+                        // socket.emit("increase_point", word.length);
                     }
                 }
                 return newWords;
