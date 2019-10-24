@@ -12,7 +12,7 @@ import Chat from "./Chat";
 // const url = "localhost:4000"
 // const socket = socketIOClient(url)
 function App() {
-    const [count, setCount] = useState(0);
+    const [myScore, setMyScore] = useState(0);
     const [words, setWords] = useState([]);
     // console.log(data);
     const [input, setInput] = useState("");
@@ -62,7 +62,7 @@ function App() {
             console.log("reset the game");
             setTimeLeft(duration);
             setShowGame(true);
-            setCount(count => 0);
+            setMyScore(myScore => 0);
             setShowWinner(false);
             setShowWaiting(false);
             setShowGame(true);
@@ -185,8 +185,9 @@ function App() {
                         newWords.push(word);
                     } else {
                         newWords.push({ ...word, destroyed: true });
-                        setCount(c => c + 1);
-                        socket.emit("increase_point", 1);
+                        var pointGained = word.word.length;
+                        setMyScore(c => c + pointGained);
+                        socket.emit("increase_point", pointGained);
                     }
                 }
                 return newWords;
@@ -316,7 +317,7 @@ function App() {
                     <div>
                         <p>
                             {playerId !== "" && players[playerId].username}'s
-                            score: {count}
+                            score: {myScore}
                         </p>
                     </div>
 
