@@ -6,7 +6,7 @@ var randomWords = require("random-words");
 
 //App setup
 var app = express();
-var port = process.env.PORT || 80;
+var port = process.env.PORT || 4000;
 var server = app.listen(port, function() {
     console.log("listening to requests on port " + port);
 });
