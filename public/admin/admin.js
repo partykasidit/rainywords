@@ -1,5 +1,11 @@
 //Create socket
-var socket = io.connect("http://localhost:4000/game");
+var socket = io.connect(
+    location.protocol +
+        "//" +
+        location.hostname +
+        (location.port && ":" + location.port) +
+        "/game"
+);
 
 //DOM
 var resetButton = document.getElementById("reset_button");
