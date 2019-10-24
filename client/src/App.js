@@ -21,7 +21,7 @@ function App() {
     const [randomWords, setRandomWords] = useState([]);
     const [morePlayer, setMorePlayer] = useState(0);
 
-    var duration = 300;
+    var duration = 10;
     // initialize timeLeft with the seconds prop
     const [timeLeft, setTimeLeft] = useState(-1);
     const [showWelcome, setShowWelcome] = useState(true);
@@ -97,14 +97,14 @@ function App() {
 
             socket.on("words", data => {
                 // console.log(data);
-                setRandomWords(() => {
-                    console.log("mapping data");
-                    return data.map(obj => {
-                        console.log(obj.word);
-                        return obj.word;
+                if (words.length === 0) {
+                    setRandomWords(() => {
+                        console.log("mapping data");
+                        return data.map(obj => {
+                            return obj.word;
+                        });
                     });
-                });
-
+                }
                 // setShowWaiting(false);
                 // setShowGame(true);
                 // so get word
@@ -116,7 +116,6 @@ function App() {
                 // setTimeLeft(duration);
             });
 
-            console.log(setRandomWords);
             setTimeLeft(duration);
             setShowWaiting(false);
             setShowGame(true);
@@ -128,34 +127,42 @@ function App() {
     // })
 
     let inputRef;
+    let counter = 0;
     useEffect(() => {
-        let index = 0;
-        const size = randomWords.length;
-        console.log(size);
+        if (showGame && !showWinner) {
+            const size = randomWords.length;
 
-        setInterval(() => {
-            console.log(randomWords);
-            setWords(old => [
-                ...old,
-                {
-                    id: index,
-                    word: randomWords[index++ % size],
-                    location: Math.floor(Math.random() * 60) + 20 + "vw"
-                }
-            ]);
-            // console.log(words);
-        }, 3000);
+            const loop = setInterval(() => {
+                const delay = Math.floor(Math.random() * 100) + 100; //Random delay
+                const n = counter++;
+                console.log(n);
+                setTimeout(() => {
+                    setWords(old => [
+                        ...old,
+                        {
+                            id: n,
+                            word: randomWords[n % size],
+                            location:
+                                Math.floor(Math.random() * 60) + 20 + "vw",
+                            destroyed: false
+                        }
+                    ]);
+                }, delay);
+                // console.log(words);
+            }, 200); // Spam Rate
 
-        if (inputRef) {
-            inputRef.focus();
+            if (inputRef) {
+                inputRef.focus();
+            }
+            return () => clearInterval(loop);
         }
-    }, [randomWords, showGame]);
+    }, [randomWords, showWinner, showGame]);
     // console.log(data);
 
     //for timer
-    useEffect(() => {
-        if (!timeLeft) return;
-    }, [timeLeft]); //showGame
+    // useEffect(() => {
+    //     if (!timeLeft) return;
+    // }, [timeLeft]); //showGame
 
     useEffect(() => {
         if (timeLeft === 0) {
@@ -169,20 +176,22 @@ function App() {
     };
 
     const handleSubmit = e => {
-        setWords(oldWords => {
-            const newWords = [];
-            for (const word of oldWords) {
-                if (word.word !== input) {
-                    newWords.push(word);
-                } else {
-                    setCount(c => c + 1);
-                    // socket.emit("increase_point");
-                    socket.emit("increase_point", 1);
+        if (!showWinner && showGame) {
+            setWords(oldWords => {
+                const newWords = [];
+                for (const word of oldWords) {
+                    if (word.word !== input) {
+                        newWords.push(word);
+                    } else {
+                        newWords.push({ ...word, destroyed: true });
+                        setCount(c => c + 1);
+                        socket.emit("increase_point", 1);
+                    }
                 }
-            }
-            return newWords;
-        });
-        setInput("");
+                return newWords;
+            });
+            setInput("");
+        }
         e.preventDefault();
     };
 
@@ -249,37 +258,35 @@ function App() {
         <div className="App">
             {/* Hello{randomWords} */}
             {showSinglePlayer && <SinglePlayer />}
-            <div>
-                {showWaiting && (
-                    <div>
-                        <div className="welcomePlayer">
-                            <div>
-                                {" "}
-                                Welcome,
-                                {playerId !== "" && players[playerId].username}
-                            </div>
+            {showWaiting && (
+                <>
+                    <div className="welcomePlayer">
+                        <div>
+                            {" "}
+                            Welcome,
+                            {playerId !== "" && players[playerId].username}
                         </div>
-                        <h1>
-                            {lobbyPlayers < 2 ? (
-                                <div className="Waiting">
-                                    Waiting for more players...
-                                    <div>
-                                        <img src="/cat.gif" alt="loading..." />
-                                    </div>
-                                </div>
-                            ) : (
-                                <button
-                                    id="play"
-                                    type="button"
-                                    onClick={handlePlayGame}
-                                >
-                                    Play
-                                </button>
-                            )}
-                        </h1>
                     </div>
-                )}
-            </div>
+                    <h1>
+                        {lobbyPlayers < 2 ? (
+                            <div className="Waiting">
+                                Waiting for more players...
+                                <div>
+                                    <img src="/cat.gif" alt="loading..." />
+                                </div>
+                            </div>
+                        ) : (
+                            <button
+                                id="play"
+                                type="button"
+                                onClick={handlePlayGame}
+                            >
+                                Play
+                            </button>
+                        )}
+                    </h1>
+                </>
+            )}
             {showGame && (
                 <header className="App-header">
                     <div style={{ display: "flex-inline" }}>
@@ -287,6 +294,7 @@ function App() {
                             className="showScore"
                             players={players}
                             playerId={playerId}
+                            style={{ justifyContent: "flex-end" }}
                         />
                         {/* <div>{timers}</div> */}
 
@@ -320,12 +328,13 @@ function App() {
                         />
                     </form>
 
-                    {words.map(({ word, location, id }, idx) => (
+                    {words.map(({ word, location, id, destroyed }, idx) => (
                         <CoolBox
                             className="thebox"
                             word={word}
                             location={location}
-                            key={idx}
+                            key={id}
+                            destroyed={destroyed}
                             onDropped={() =>
                                 setWords(old => old.filter(w => w.id !== id))
                             }
@@ -334,12 +343,10 @@ function App() {
                 </header>
             )}
             {showWelcome && (
-                <div>
+                <>
                     {" "}
-                    <div>
-                        <Welcome />
-                    </div>
-                    <div>
+                    <Welcome />
+                    <div className="singlePlayer ">
                         <button
                             style={mystyle}
                             id="singlePlayer"
@@ -352,7 +359,7 @@ function App() {
                             Single Player is very Hardcore and have alot of bugs
                         </div>
                     </div>
-                </div>
+                </>
             )}
         </div>
     );

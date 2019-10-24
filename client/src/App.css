@@ -1,5 +1,15 @@
 .App {
     text-align: center;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+}
+
+.App .Welcome,
+.App .singlePlayer {
+    flex-grow: 1;
 }
 
 .App-logo {
@@ -50,6 +60,7 @@
 
 .EndGame {
     background-color: darkorange;
+    padding: 20px;
     font-size: 80%;
     font-style: normal;
 }
@@ -60,4 +71,15 @@
 #singlePlayerMessage {
     font-size: 80%;
     font-style: Nunito;
+}
+
+.showScore {
+    margin: 5px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.singlePlayer {
+    height: 100%;
+    background: yellow;
 }

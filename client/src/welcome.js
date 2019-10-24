@@ -35,7 +35,6 @@ function Welcome() {
     };
 
     return (
-        
         <div className="Welcome">
             <div>
                 <h1>Rainy Words Game</h1>

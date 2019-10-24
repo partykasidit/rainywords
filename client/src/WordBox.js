@@ -12,12 +12,21 @@ const WordBox = forwardRef((props, ref) => {
     );
 });
 //export const CoolBox = ({word, idx}) => {
-export const CoolBox = ({ word, idx, location, onDropped }) => {
+export const CoolBox = ({ word, idx, location, onDropped, destroyed }) => {
     const [pose, setPose] = useState("top");
+    let timeout;
     useEffect(() => {
         setPose("bottom");
-        setTimeout(() => onDropped(), DURATION);
+        timeout = setTimeout(() => onDropped(), DURATION);
     }, []);
+
+    useEffect(() => {
+        if (destroyed) {
+            clearTimeout(timeout);
+            setPose("destroyed");
+            setTimeout(() => onDropped(), 1000);
+        }
+    }, [destroyed]);
     return (
         <MovingWordBox
             className="thebox"
@@ -39,6 +48,17 @@ export const MovingWordBox = posed(WordBox)({
                 type: "tween",
                 ease: "linear",
                 duration: DURATION
+            }
+        }
+    },
+    destroyed: {
+        color: "#FFFF00",
+        fontSize: "100px",
+        transition: {
+            fontSize: {
+                type: "tween",
+                ease: "linear",
+                duration: 1000
             }
         }
     },

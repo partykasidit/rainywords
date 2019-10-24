@@ -1,5 +1,6 @@
 import React from "react";
 import { socket } from "./socket";
+import "./Score.css";
 
 function Score({ players, playerId }) {
     // const listItems = players.map(player => (
@@ -8,17 +9,16 @@ function Score({ players, playerId }) {
     // ));
     return (
         <div className="Score">
-            <div>
+            {/* // <div style={{ float: "right" }}> */}
+            <ul>
                 {Object.values(players).map(player => {
                     return (
-                        <div key={player.id}>
-                            <li>
-                                {player.username}:{player.score}
-                            </li>
-                        </div>
+                        <li key={player.id}>
+                            {player.username}:{player.score}
+                        </li>
                     );
                 })}
-            </div>
+            </ul>
         </div>
     );
 }
@@ -50,3 +50,7 @@ export default Score;
 {
     /* <h1>{players[oppId].username}: {players[oppId].score}</h1> */
 }
+
+// style={{ display: "flex",
+// justifyContent: "flex-end"
+// }}
