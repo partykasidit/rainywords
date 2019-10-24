@@ -266,6 +266,14 @@ function App() {
                             {" "}
                             Welcome,
                             {playerId !== "" && players[playerId].username}
+                            <>
+                                {" "}
+                                <img
+                                    className="avatar"
+                                    src={players[playerId].avatar}
+                                    alt=""
+                                />
+                            </>
                         </div>
                     </div>
                     <h1>
@@ -368,3 +376,5 @@ function App() {
 }
 
 export default App;
+
+//`

@@ -83,3 +83,10 @@
     height: 100%;
     background: yellow;
 }
+.avatar {
+    height: 50px;
+    width: 50px;
+    margin: 1%;
+    border-radius: 50%;
+    text-align: center;
+}

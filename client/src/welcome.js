@@ -11,17 +11,27 @@ function Welcome() {
     const [alreadyClick, setAlreadyClick] = useState(0);
     const [waiting, setWaiting] = useState(false);
     const [morePlayer, setMorePlayer] = useState(0);
-    const [myname, setMyName] = useState("");
+    const [myName, setMyName] = useState("");
     const ambulance = new Audio("/amb.mp3");
+    const [avatar, setAvatar] = useState("/redbird.png");
 
     const sendMessage = message => {
         // socket.emit("addPlayer", message);
         // socket.emit('add_player',message);
-        socket.emit("add_player", message);
-        setWaiting(true); //
+        const playerDetail = {
+            myName: input,
+            avatar
+        };
         setMyName(message);
+        socket.emit("add_player", playerDetail);
+        setWaiting(true); //
         setMorePlayer(c => c + 1);
+
         ambulance.play();
+    };
+
+    const handleOnSelect = e => {
+        setAvatar(e.target.value);
     };
 
     const changeInput = e => {
@@ -33,6 +43,8 @@ function Welcome() {
         setInput("");
         e.preventDefault();
     };
+
+    const avatars = ["/bluebird.png", "/redbird.png", "/yellowbird.png"];
 
     return (
         <div className="Welcome">
@@ -49,6 +61,26 @@ function Welcome() {
                     <button id="playbtn" type="button" onClick={handleSubmit}>
                         Play Online
                     </button>
+                    <div>
+                        {avatars.map((image, index) => {
+                            return (
+                                <ul>
+                                    <input
+                                        type="radio"
+                                        name="avatar"
+                                        value={image}
+                                        checked={avatar === image}
+                                        onChange={handleOnSelect}
+                                    />
+                                    <img
+                                        className="avatar"
+                                        src={image}
+                                        alt="loading..."
+                                    ></img>
+                                </ul>
+                            );
+                        })}
+                    </div>
                 </form>
             </div>
         </div>

@@ -39,12 +39,25 @@ game.on("connection", socket => {
         game.emit("number_of_players_changed", players.size);
         game.emit("players_changed", mapToObject(players)); //bug
     });
-    socket.on("add_player", name => {
-        console.log("Welcome " + name);
+    // socket.on("add_player", name => {
+    //     console.log("Welcome " + name);
+    //     players.set(socket.id, {
+    //         íd: socket.id,
+    //         username: name,
+    //         score: 0
+    //     });
+    //     game.emit("number_of_players_changed", players.size);
+    //     game.emit("players_changed", mapToObject(players));
+    //     socket.emit("setPlayerId", socket.id); //added
+    // });
+
+    socket.on("add_player", playerDetail => {
+        console.log("Welcome " + playerDetail.myName);
         players.set(socket.id, {
             íd: socket.id,
-            username: name,
-            score: 0
+            username: playerDetail.myName,
+            score: 0,
+            avatar: playerDetail.avatar
         });
         game.emit("number_of_players_changed", players.size);
         game.emit("players_changed", mapToObject(players));
