@@ -174,7 +174,6 @@ function App() {
     const handleInput = e => {
         setInput(e.target.value);
     };
-    let points;
     const handleSubmit = e => {
         if (!showWinner && showGame) {
             setWords(oldWords => {
@@ -183,8 +182,8 @@ function App() {
                     if (word.word !== input) {
                         newWords.push(word);
                     } else {
-                        setCount(c => c + points);
-                        socket.emit("increase_point", points);
+                        setCount(c => c + 1);
+                        socket.emit("increase_point", 1);
                         newWords.push({ ...word, destroyed: true });
                         // setCount(c => c + word.length);
                         // socket.emit("increase_point", word.length);
