@@ -29,7 +29,7 @@ function SinglePlayer() {
     //     <li key={player.username}>{players.score}</li>
 
     // ));
-    var duration = 300;
+    var duration = 10;
     const randomWords = [
         "Gareth",
         "Ronaldo",
@@ -145,23 +145,30 @@ function SinglePlayer() {
         );
     };
 
+    var style = {
+        color: "#" + Math.floor(Math.random() * 0x1000000).toString(16),
+        backgroundColor:
+            "#" + Math.floor(Math.random() * 0x1000000).toString(16)
+    };
     return (
-        <header className="a">
+        <header className="a" style={style}>
             <div style={{ display: "flex-inline" }}>
                 {showWinner ? (
-                    <div className="b">
+                    <div className="b" style={style}>
                         <h1>GameOver</h1>
                         <button onClick={resetGame}>Play Again</button>
                     </div>
                 ) : (
-                    <h1 className="c">{timer(timeLeft)}</h1>
+                    <h1 className="c" style={style}>
+                        {timer(timeLeft)}
+                    </h1>
                 )}
             </div>
             <div>
                 <p>{count}</p>
             </div>
 
-            <form className="d" onSubmit={handleSubmit}>
+            <form className="d" style={style} onSubmit={handleSubmit}>
                 <input
                     onChange={handleInput}
                     value={input}
