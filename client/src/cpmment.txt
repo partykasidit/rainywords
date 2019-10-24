@@ -1,0 +1,164 @@
+
+// {
+    /* <p>
+          You learn React {count} time
+        </p>
+        <a
+          className="App-link"
+          href="#"
+          onClick={() => setCount(count+1) }
+        >
+          Learn React
+        </a> */
+// }
+
+// 1 page welcome
+// game
+// input
+// play no socket page
+// when get name
+
+// send name to second page
+
+// 2 page use app.js
+// socket app player
+// welcome "name"
+// add socket
+// in useeffect socket.on to
+
+// show game now
+// if player.size>2 changing waiting to start
+// if start then get words
+
+// word falling down game start
+//show players
+//timer stop restart
+
+// socket.on("updatePlayers", players => {
+//     console.log("UpdatePlayers");
+//     console.log(players);
+//     setPlayers(players);
+// });
+// socket.on("startGame", oppId => {
+//     console.log("StartGame");
+//     console.log(`OppId: ${oppId}`);
+//     setOppId(oppId);
+//     setShowGame(true);
+//     setTimeLeft(duration);
+// });
+
+// socket.on("setPlayerId", playerId => {
+//     // console.log("SetPlayerId");
+//     // console.log(`PlayerId: ${playerId}`);
+//assume we habe NAME FROM WELCOME
+//  socket.emit("add_player",name);
+
+// const randomWords = [
+//     "Gareth",
+//     "Ronaldo",
+//     "Falcao",
+//     "kkkkk",
+//     "Ronaldo",
+//     "BigC"
+// ];
+//let inputRef;
+
+// useEffect(() => {
+
+//     let index = 0;
+//     const size = randomWords.length;
+
+//     setInterval(() => {
+//         setWords(old => [
+//             ...old,
+//             {
+//                 id: index,
+//                 word: randomWords[index++ % size],
+//                 location: Math.floor(Math.random() * 60) + 20 + "vw"
+//             }
+//         ]);
+//         // console.log(words);
+//     }, 3000);
+
+//     if (inputRef) {
+//         inputRef.focus();
+//     }
+// }, []);
+
+// socket.on("words", data => {
+//     // console.log(data);
+//     setRandomWords(() => {
+//         console.log("mapping data");
+//         return data.map(obj => {
+//             console.log(obj.word);
+//             return obj.word;
+//         });
+//     });
+//     console.log(setRandomWords);
+//     setTimeLeft(duration);
+//     setShowWaiting(false);
+//     setShowGame(true);
+// })
+
+// setRandomWords(() => {
+//     console.log("mapping data");
+//     return data.map(obj => {
+//         console.log(obj.word);
+//         return obj.word;
+//     });
+// });
+// setArrayReceived(c => c + 1);
+// socket.on("words", data => {
+//     // console.log(data);
+//     setRandomWords(() => {
+//         console.log("mapping data");
+//         return data.map(obj => {
+//             console.log(obj.word);
+//             return obj.word;
+//         });
+//     });
+//     setArrayReceived(c => c + 1);
+
+//     console.log(setRandomWords);
+//     setTimeLeft(duration);
+//     setShowWaiting(false);
+//     setShowGame(true);
+// console.log(setRandomWords);
+// setTimeLeft(duration);
+// setShowWaiting(false);
+// setShowGame(true); 
+
+ setRandomWords(() => {
+                console.log("mapping data");
+                return data.map(obj => {
+                    console.log(obj.word);
+                    return obj.word;
+                });
+            });
+            setArrayReceived(c => c + 1);
+            socket.on("words", data => {
+                // console.log(data);
+                setRandomWords(() => {
+                    console.log("mapping data");
+                    return data.map(obj => {
+                        console.log(obj.word);
+                        return obj.word;
+                    });
+                });
+                setArrayReceived(c => c + 1);
+            
+                console.log(setRandomWords);
+                setTimeLeft(duration);
+                setShowWaiting(false);
+                setShowGame(true);
+         
+
+           useEffect(() => {
+        if (!timeLeft) return;
+
+        // const intervalId = setInterval(() => {
+        //     setTimeLeft(timeLeft => timeLeft - 1);
+        // }, 1000);
+
+        // return () => clearInterval(intervalId);
+    }, [timeLeft]); //showGame

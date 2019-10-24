@@ -1,0 +1,19 @@
+.Welcome {
+    background: red;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Welcome input {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+#playbtn {
+    padding: 8px;
+    border-radius: 5px;
+    font-size: 2em;
+    background: greenyellow;
+    border: none;
+}
